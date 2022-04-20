@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package proto;
+option go_package = "/pb";
+
+service PortService{
+    rpc Get(PortId) returns (Port) {}
+    rpc Create(Port) returns (Response) {}
+    rpc Update(Port) returns (Response) {}
+    rpc Delete(Port) returns (Response) {}
+    rpc Upload(stream Port) returns (Response) {}
+    rpc Download(Params) returns (stream Port) {}
+}
+
+message Port {
+    string id = 1;
+    string name = 2;
+    string city = 3;
+    string country = 4;
+    repeated string alias = 5;
+    repeated string regions = 6;
+    repeated double coordinates = 7;
+    string province = 8;
+    string timezone = 9;
+    repeated string unlocs = 10;
+    string code = 11;
+}
+
+message PortId {
+    string id = 1;
+}
+
+message Params {
+    int32 limit = 1;
+}
+message Response {
+    bool status = 1;
+}

@@ -1,0 +1,36 @@
+version: '3.9'
+
+services:
+  mongo:
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: portpassword
+
+  mongo-express:
+    image: mongo-express
+    restart: always
+    depends_on:
+      - mongo
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: admin
+      ME_CONFIG_MONGODB_ADMINPASSWORD: portpassword
+      ME_CONFIG_MONGODB_URL: mongodb://admin:portpassword@mongo:27017/
+
+  port-service:
+    image: quay.io/arturobrzut/portservice:1.0
+    restart: always
+    depends_on:
+      - mongo
+    ports:
+      - 50051:50051
+    environment:
+      DB_TYPE: MONGO
+      DB_USER: admin
+      DB_PASSWORD: portpassword
+      DB_URL: mongo:27017
+      DB_NAME: port_service_db
+      DB_COLLECTION: ports
