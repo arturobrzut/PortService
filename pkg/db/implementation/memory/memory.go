@@ -2,11 +2,11 @@ package memory
 
 import (
 	log "github.com/sirupsen/logrus"
-	implement "port/pkg/db/implementation"
 	"port/pkg/grpc/pb"
 )
 
-func New(_ map[implement.DbParam]string) (*Database, error) {
+func New() (*Database, error) {
+	setDbConfig()
 	log.Info("Memory Database")
 	return &Database{ports: make(map[string]*pb.Port)}, nil
 }
@@ -74,4 +74,9 @@ func (e ErrAlreadyExists) Error() string {
 
 func (e ErrNotFound) Error() string {
 	return "Not found"
+}
+
+func setDbConfig() map[int]string {
+	dbConfig := map[int]string{}
+	return dbConfig
 }

@@ -9,3 +9,11 @@ type Database struct {
 	dbName     string
 	collection string
 }
+
+const (
+	DbUrl int = iota
+	DbName
+	DbUser
+	DbPassword
+	DbCollection
+)

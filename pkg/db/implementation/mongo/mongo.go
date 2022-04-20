@@ -6,13 +6,14 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
-	i "port/pkg/db/implementation"
 	"port/pkg/grpc/pb"
+	"port/pkg/util"
 )
 
-func New(dbConfig map[i.DbParam]string) (*Database, error) {
+func New() (*Database, error) {
 	log.Info("Mongo Database")
-	uri := "mongodb://" + dbConfig[i.DbUser] + ":" + dbConfig[i.DbPassword] + "@" + dbConfig[i.DbUrl]
+	dbConfig := setDbConfig()
+	uri := "mongodb://" + dbConfig[DbUser] + ":" + dbConfig[DbPassword] + "@" + dbConfig[DbUrl]
 
 	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(uri))
 	if err != nil {
@@ -26,7 +27,7 @@ func New(dbConfig map[i.DbParam]string) (*Database, error) {
 	}
 	log.Info("Mongo Ping successfully")
 
-	return &Database{dbName: dbConfig[i.DbName], collection: dbConfig[i.DbCollection], client: client}, nil
+	return &Database{dbName: dbConfig[DbName], collection: dbConfig[DbCollection], client: client}, nil
 }
 
 func (db *Database) Close() {
@@ -54,4 +55,14 @@ func (db *Database) Update(port *pb.Port) error {
 
 func (db *Database) CreateOrUpdate(port *pb.Port) error {
 	panic("not implemented yet")
+}
+
+func setDbConfig() map[int]string {
+	dbConfig := map[int]string{}
+	dbConfig[DbUrl] = util.ReadEnvVar("DB_URL", "mongo:27017")
+	dbConfig[DbName] = util.ReadEnvVar("DB_NAME", "port_db")
+	dbConfig[DbUser] = util.ReadEnvVar("DB_USER", "root")
+	dbConfig[DbPassword] = util.ReadEnvVar("DB_PASSWORD", "example")
+	dbConfig[DbCollection] = util.ReadEnvVar("DB_COLLECTION", "collection")
+	return dbConfig
 }
